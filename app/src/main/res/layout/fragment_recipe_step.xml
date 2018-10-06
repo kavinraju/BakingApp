@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <FrameLayout
+            android:id="@+id/frameLayout_media"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:background="#000000"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent">
+        <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+            android:id="@+id/smipleExoPlayerView"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"/>
+        </FrameLayout>
+        <TextView
+            android:id="@+id/tv_step_desp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:hint="@string/step_desp_hint"
+            style="@style/Base.TextAppearance.AppCompat.Title"
+            android:fontFamily="sans-serif"
+            android:layout_margin="16dp"
+            android:textColor="@color/black"
+
+            app:layout_constraintTop_toBottomOf="@id/frameLayout_media"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+    </android.support.constraint.ConstraintLayout>
+</android.support.v4.widget.NestedScrollView>

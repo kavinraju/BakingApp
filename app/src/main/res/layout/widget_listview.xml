@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tv_widget_recipe_name"
+        android:hint="@string/cheese_cake"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        style="@style/Base.TextAppearance.AppCompat.Large" />
+    <ListView
+        android:id="@+id/lv_recipe_ingredients"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/tv_widget_recipe_name"/>
+</RelativeLayout>
+
+<RelativeLayout
+    android:id="@+id/rl_emptyView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tv_widget_no_items"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:text="@string/no_recipes"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:fontFamily="sans-serif-smallcaps"
+        android:padding="8dp"
+        android:background="@color/colorPrimaryDark"
+        style="@style/Base.TextAppearance.AppCompat.Display1" />
+</RelativeLayout>
+
+</FrameLayout>

@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Bake It</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_recipe">RecipeActivity</string>
+    <string name="title_activity_recipe_step">RecipeStepActivity</string>
+    <string name="title_activity_scrolling">ScrollingActivity</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="favorite_recipes">Favorite Recipes</string>
+    <string name="recipes">Recipes</string>
+    <string name="step_desp_hint">2. Melt the butter and bittersweet chocolate together in a microwave or a double boiler. If microwaving, heat for 30 seconds at a time, removing bowl and stirring ingredients in between.</string>
+    <string name="no_recipes">No Recipes!</string>
+    <string name="cheese_cake">Cheese Cake</string>
+    <string name="back_button">back button</string>
+    <string name="recipe_image">Recipe Image</string>
+    <string name="play_previous">play previous</string>
+    <string name="rewind">rewind</string>
+    <string name="repeat_toogle">repeat toogle</string>
+    <string name="play">play</string>
+    <string name="pause">pause</string>
+    <string name="play_next">play next</string>
+    <string name="full_screen">full screen</string>
+    <string name="steps">Steps</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="_30gm">30gm</string>
+    <string name="bittersweet_chocolate_60_70_cacao">Bittersweet chocolate (60-70% cacao)</string>
+    <string name="recipe_image_view">recipe image view</string>
+    <string name="brownies">Brownies</string>
+    <string name="nutella_or_other_chocolate_hazelnut_spread">Nutella or other chocolate-hazelnut spread</string>
+    <string name="_1_0">1.0</string>
+</resources>
