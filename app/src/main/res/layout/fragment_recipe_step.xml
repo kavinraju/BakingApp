@@ -21,6 +21,7 @@
             app:layout_constraintRight_toRightOf="parent">
         <com.google.android.exoplayer2.ui.SimpleExoPlayerView
             android:id="@+id/smipleExoPlayerView"
+            app:show_timeout="5000"
             android:layout_width="match_parent"
             android:layout_height="250dp"/>
         </FrameLayout>

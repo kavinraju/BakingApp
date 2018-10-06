@@ -9,4 +9,6 @@
     <color name="colorAccent">#5df2d6</color>
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
+    <color name="colorUnplayed">#4900bfa5</color>
+    <color name="colorBuffered">#9a00bfa5</color>
 </resources>

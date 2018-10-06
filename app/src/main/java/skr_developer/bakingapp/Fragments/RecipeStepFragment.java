@@ -3,8 +3,8 @@ package skr_developer.bakingapp.Fragments;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,43 +16,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
-import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.BandwidthMeter;
-import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-
-import java.util.List;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -67,6 +53,7 @@ public class RecipeStepFragment extends Fragment {
     private final static String BUNDLE_KEY_PLAYER_FULLSCREEN = "playerFullscreen";
     private final static String BUNDLE_KEY_PLAYER_ORIENTATION_FULLSCREEN = "playerOrientationFullscreen";
     private static String BUNDLE_KEY_STEP = "step";
+    private static String BUNDLE_KEY_GET_PLAY_WHEN_READY = "playWhenReady";
 
     private SimpleExoPlayer player;
     private MediaSource mediaSource;
@@ -78,11 +65,15 @@ public class RecipeStepFragment extends Fragment {
     private long resumePosition;
     private static boolean isExoPlayerFullscreen = false;
     private static boolean isExoPlayerOrientationFullscreen = false;
+    private static boolean playWhenReady = true;
     private String videoUrl;
 
     private Step step;
 
     private Context context;
+
+    private static final DefaultBandwidthMeter BANDWIDTH_METER =
+            new DefaultBandwidthMeter();
 
     @BindView(R.id.smipleExoPlayerView)
     SimpleExoPlayerView simpleExoPlayerView;
@@ -114,6 +105,7 @@ public class RecipeStepFragment extends Fragment {
             resumePosition = savedInstanceState.getLong(BUNDLE_KEY_RESUME_POSITION);
             isExoPlayerFullscreen = savedInstanceState.getBoolean(BUNDLE_KEY_PLAYER_FULLSCREEN);
             isExoPlayerOrientationFullscreen = savedInstanceState.getBoolean(BUNDLE_KEY_PLAYER_ORIENTATION_FULLSCREEN);
+            playWhenReady = savedInstanceState.getBoolean(BUNDLE_KEY_GET_PLAY_WHEN_READY);
 
             step = savedInstanceState.getParcelable(BUNDLE_KEY_STEP);
             tv_stepDesp.setText(step.getDescription());
@@ -121,46 +113,48 @@ public class RecipeStepFragment extends Fragment {
                 videoUrl = step.getVideoURL();
             }
         }
-        initFullscreenDialog();
-        initFullscreenButton();
-        initMediaSource(videoUrl);
-        initializePlayer();
-
-        if (isExoPlayerFullscreen) {
-            ((ViewGroup) simpleExoPlayerView.getParent()).removeView(simpleExoPlayerView);
-            fullScreenDialog.addContentView(simpleExoPlayerView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            fullScreenIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_fullscreen_skrink));
-            fullScreenDialog.show();
-        }
-
-        if (isExoPlayerOrientationFullscreen){
-            openFullscreenDialog();
-        }else {
-            closeFullscreenDialog();
-        }
-
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (Build.VERSION.SDK_INT > 23){
+            initializeAllForPlayer(videoUrl);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (Build.VERSION.SDK_INT <= 23 || player == null){
+            initializeAllForPlayer(videoUrl);
+        }
+    }
 
     @Override
     public void onPause() {
 
         super.onPause();
 
-        if (simpleExoPlayerView != null && player != null) {
-            resumeWindow = player.getCurrentWindowIndex();
-            resumePosition = Math.max(0, player.getContentPosition());
-            player.release();
-        }
+        if(Build.VERSION.SDK_INT <= 23) {
+            if (simpleExoPlayerView != null && player != null) {
+                resumeWindow = player.getCurrentWindowIndex();
+                resumePosition = Math.max(0, player.getContentPosition());
+                playWhenReady = player.getPlayWhenReady();
+                releasePlayer();
+            }
 
-        if (fullScreenDialog != null)
-            fullScreenDialog.dismiss();
+            if (fullScreenDialog != null)
+                fullScreenDialog.dismiss();
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        releasePlayer();
+        if (Build.VERSION.SDK_INT > 23) {
+            releasePlayer();
+        }
     }
 
     @Override
@@ -171,6 +165,7 @@ public class RecipeStepFragment extends Fragment {
         outState.putBoolean(BUNDLE_KEY_PLAYER_FULLSCREEN, isExoPlayerFullscreen);
         outState.putBoolean(BUNDLE_KEY_PLAYER_ORIENTATION_FULLSCREEN, isExoPlayerOrientationFullscreen);
         outState.putParcelable(BUNDLE_KEY_STEP, step);
+        outState.putBoolean(BUNDLE_KEY_GET_PLAY_WHEN_READY, playWhenReady);
 
         super.onSaveInstanceState(outState);
     }
@@ -237,14 +232,17 @@ public class RecipeStepFragment extends Fragment {
     }
 
 
-    private void initializePlayer() {
+    private void initializePlayer(String videoUrl) {
 
-        BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-        TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
+        //BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+        TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
         TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
         LoadControl loadControl = new DefaultLoadControl();
         player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getActivity()), trackSelector, loadControl);
+
         simpleExoPlayerView.setPlayer(player);
+
+        player.setPlayWhenReady(playWhenReady);
 
         boolean haveResumePosition = resumeWindow != C.INDEX_UNSET;
         if (haveResumePosition) { // if have Resume Position
@@ -254,8 +252,8 @@ public class RecipeStepFragment extends Fragment {
         }else {
             Log.d("haveResumePosition", "false");
         }
+        initMediaSource(videoUrl);
         player.prepare(mediaSource,true,false);
-        player.setPlayWhenReady(true);
     }
 
     public void releasePlayer(){
@@ -277,6 +275,24 @@ public class RecipeStepFragment extends Fragment {
         mediaSource = new ExtractorMediaSource(daUri,dataSourceFactory,new DefaultExtractorsFactory(),null,null);
     }
 
+    private void initializeAllForPlayer(String videoUrl){
+        initFullscreenDialog();
+        initFullscreenButton();
+        initializePlayer(videoUrl);
+
+        if (isExoPlayerFullscreen) {
+            ((ViewGroup) simpleExoPlayerView.getParent()).removeView(simpleExoPlayerView);
+            fullScreenDialog.addContentView(simpleExoPlayerView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            fullScreenIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_fullscreen_skrink));
+            fullScreenDialog.show();
+        }
+
+        if (isExoPlayerOrientationFullscreen){
+            openFullscreenDialog();
+        }else {
+            closeFullscreenDialog();
+        }
+    }
     public void setStep(Step step) {
         this.step = step;
     }

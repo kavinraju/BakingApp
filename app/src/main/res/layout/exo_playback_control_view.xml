@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="bottom"
     android:background="#CC000000"
     android:orientation="vertical">
@@ -15,30 +16,36 @@
 
         <ImageButton
             android:id="@+id/exo_prev"
+            android:tint="@color/colorPrimaryLight"
             android:contentDescription="@string/play_previous"
             style="@style/ExoMediaButton.Previous"/>
 
         <ImageButton
             android:id="@+id/exo_rew"
+            android:tint="@color/colorPrimaryLight"
             android:contentDescription="@string/rewind"
             style="@style/ExoMediaButton.Rewind"/>
 
         <ImageButton
             android:id="@+id/exo_repeat_toggle"
+            android:tint="@color/colorPrimaryLight"
             android:contentDescription="@string/repeat_toogle"
             style="@style/ExoMediaButton"/>
 
         <ImageButton
             android:id="@+id/exo_play"
+            android:tint="@color/colorPrimaryLight"
             android:contentDescription="@string/play"
             style="@style/ExoMediaButton.Play"/>
 
         <ImageButton
             android:id="@+id/exo_pause"
+            android:tint="@color/colorPrimaryLight"
             android:contentDescription="@string/pause"
             style="@style/ExoMediaButton.Pause"/>
         <ImageButton
             android:id="@+id/exo_next"
+            android:tint="@color/colorPrimaryLight"
             android:contentDescription="@string/play_next"
             style="@style/ExoMediaButton.Next"/>
     </LinearLayout>
@@ -57,13 +64,17 @@
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
             android:includeFontPadding="false"
-            android:textColor="#FFBEBEBE"/>
+            android:textColor="@color/colorPrimaryDark"/>
 
         <com.google.android.exoplayer2.ui.DefaultTimeBar
             android:id="@id/exo_progress"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="26dp"/>
+            android:layout_height="26dp"
+            app:ad_marker_color="@color/colorSecondaryDark"
+            app:played_color="@color/colorSecondaryLight"
+            app:buffered_color="@color/colorBuffered"
+            app:unplayed_color="@color/colorUnplayed" />
 
         <TextView android:id="@id/exo_duration"
             android:layout_width="wrap_content"
@@ -73,7 +84,7 @@
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
             android:includeFontPadding="false"
-            android:textColor="#FFBEBEBE"/>
+            android:textColor="@color/colorPrimaryDark"/>
 
         <FrameLayout
             android:id="@+id/exo_fullscreen_button"
